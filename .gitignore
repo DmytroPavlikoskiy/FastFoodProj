@@ -151,3 +151,9 @@ cython_debug/
 .flaskenv
 *.sqlite3
 uploads/
+
+./idea
+.idea
+
+
+.DS_Store
