@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Orders Dashboard</title>
+</head>
+<body>
+
+<h1>🛒 Orders Dashboard</h1>
+
+<ul>
+{% for order in orders %}
+    <li>
+        Order #{{ order.id }} |
+        Status: {{ order.status }} |
+        Total: {{ order.total_amount }}
+
+        <a href="{{ url_for('admin.admin_order_detail', order_id=order.id) }}">View Details</a>
+    </li>
+{% endfor %}
+</ul>
+
+</body>
+</html>
