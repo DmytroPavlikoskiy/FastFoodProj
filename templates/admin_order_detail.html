@@ -32,9 +32,9 @@
 
 <h2>Change Status</h2>
 {% if order.status == "pending" %}
-    <a href="{{ url_for('admin.change_order_status', order_id=order.id, new_status='cooking') }}">👨‍🍳 Start Cooking</a>
+    <a href="{{ url_for('admin.change_order_status', order_id=order.id, new_status='cooking') }}"> Start Cooking</a>
 {% elif order.status == "cooking" %}
-    <a href="{{ url_for('admin.change_order_status', order_id=order.id, new_status='delivered') }}">🚚 Mark Delivered</a>
+    <a href="{{ url_for('admin.change_order_status', order_id=order.id, new_status='delivered') }}"> Mark Delivered</a>
 {% else %}
     <p>✅ Delivered</p>
 {% endif %}
