@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Order {{ order.id }}</title>
+</head>
+<body>
+
+<a href="{{ url_for('admin.admin_orders') }}">⬅ Back to orders</a>
+
+<h1>Order #{{ order.id }}</h1>
+
+<p><strong>Status:</strong> {{ order.status }}</p>
+<p><strong>User ID:</strong> {{ order.user_id }}</p>
+<p><strong>Address:</strong> {{ order.delivery_address }}</p>
+<p><strong>Total:</strong> {{ order.total_amount }}</p>
+<p><strong>Created:</strong> {{ order.created_at }}</p>
+
+<hr>
+
+<h2>Items</h2>
+<ul>
+{% for item in order.items %}
+    <li>
+        Product {{ item.product_id }} |
+        Qty: {{ item.quantity }} |
+        Price: {{ item.price_at_time }}
+    </li>
+{% endfor %}
+</ul>
+
+<hr>
+
+<h2>Change Status</h2>
+{% if order.status == "pending" %}
+    <a href="{{ url_for('admin.change_order_status', order_id=order.id, new_status='cooking') }}">👨‍🍳 Start Cooking</a>
+{% elif order.status == "cooking" %}
+    <a href="{{ url_for('admin.change_order_status', order_id=order.id, new_status='delivered') }}">🚚 Mark Delivered</a>
+{% else %}
+    <p>✅ Delivered</p>
+{% endif %}
+
+</body>
+</html>
