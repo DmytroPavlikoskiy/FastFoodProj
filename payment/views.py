@@ -58,7 +58,6 @@ def add_comment(product_id, user_id):
 
     db.session.add(comment)
     db.session.commit()
-
-
+    
     return "Коментар додано успішно"
 
