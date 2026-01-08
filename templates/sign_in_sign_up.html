@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FastFood | Авторизація</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/sign_up_sing_in.css') }}">
+</head>
+<body>
+    <div class="auth-container">
+        <div class="auth-card">
+            <div class="logo">
+                <span class="logo-icon">🍔</span> FAST<span>FOOD</span>
+            </div>
+            
+            <h2 id="auth-title">Ласкаво просимо!</h2>
+            <p class="subtitle" id="auth-subtitle">Будь ласка, введіть свої дані для входу</p>
+
+            <form id="auth-form" method="POST" action="{{ url_for('users.login') }}">
+                
+                <div class="input-group">
+                    <label>Електронна пошта</label>
+                    <input type="email" name="email" id="email" placeholder="example@mail.com" required>
+                </div>
+
+                <div id="register-only-fields" style="display: none;">
+                    <div class="input-group">
+                        <label>Ім'я користувача</label>
+                        <input type="text" name="username" id="username" placeholder="ivan_ivanov">
+                    </div>
+                    <div class="input-group">
+                        <label>Телефон</label>
+                        <input type="tel" name="phone" id="phone" placeholder="+380...">
+                    </div>
+                    <div class="input-group">
+                        <label>Адреса</label>
+                        <input type="text" name="address" id="address" placeholder="Ваша адреса">
+                    </div>
+                </div>
+                
+                <div class="input-group">
+                    <label>Пароль</label>
+                    <input type="password" name="password" id="password" placeholder="••••••••" required>
+                </div>
+
+                <div class="input-group" id="confirm-password-group" style="display: none;">
+                    <label>Підтвердіть пароль</label>
+                    <input type="password" name="password_confirm" id="password_confirm" placeholder="••••••••">
+                </div>
+
+                <div class="form-options" id="login-options">
+                    <label class="checkbox-container">
+                        <input type="checkbox" name="remember"> Запам'ятати мене
+                        <span class="checkmark"></span>
+                    </label>
+                    <a href="#" class="forgot-link">Забули пароль?</a>
+                </div>
+
+                <button type="submit" class="btn-primary" id="submit-btn">Увійти</button>
+            </form>
+
+            <div class="auth-footer">
+                <span id="toggle-text">Немає акаунту?</span> 
+                <a href="javascript:void(0)" id="toggle-auth" onclick="toggleAuth()">Створити зараз</a>
+            </div>
+        </div>
+    </div>
+
+   
+</body>
+</html>
+
+
+<script src="../static/js/sign_up_sign_in.js"></script>
