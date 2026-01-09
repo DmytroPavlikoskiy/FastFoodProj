@@ -28,6 +28,8 @@ init_db(app)
 try:
     from users.views import users_bp
     app.register_blueprint(users_bp, url_prefix='/users')
+    from users.admin_crud import admin_users_bp
+    app.register_blueprint(admin_users_bp, url_prefix='/admin')
     
 
     

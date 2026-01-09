@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <title>Адмін-панель | FASTFOOD</title>
+    <style>
+        :root {
+            --bg-color: #0f1113;
+            --card-bg: #1c1f22;
+            --accent-green: #2ecc71;
+            --accent-orange: #f39c12;
+            --text-color: #ffffff;
+            --danger: #e74c3c;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            font-family: 'Segoe UI', sans-serif;
+            margin: 0;
+            padding: 40px;
+        }
+
+        h1 { border-bottom: 2px solid var(--accent-orange); padding-bottom: 10px; }
+
+        .user-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            background: var(--card-bg);
+            border-radius: 15px;
+            overflow: hidden;
+        }
+
+        th, td {
+            padding: 15px;
+            text-align: left;
+            border-bottom: 1px solid #2d3436;
+        }
+
+        th { background-color: #252a2e; color: var(--accent-orange); }
+
+        .btn {
+            padding: 8px 15px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-size: 14px;
+            cursor: pointer;
+            border: none;
+        }
+
+        .btn-edit { background: var(--accent-green); color: white; }
+        .btn-delete { background: var(--danger); color: white; }
+
+        .role-badge {
+            padding: 4px 8px;
+            border-radius: 5px;
+            background: #34495e;
+            font-size: 12px;
+        }
+    </style>
+</head>
+<body>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+        {% for category, message in messages %}
+            <div style="padding: 10px; margin-bottom: 20px; border-radius: 8px; 
+                  background-color: {{ '#2ecc71' if category == 'success' else '#e74c3c' }}; color: white;">
+                {{ message }}
+            </div>
+        {% endfor %}
+    {% endif %}
+    {% endwith %}
+
+    <h1>Керування користувачами</h1>
+    
+    <table class="user-table">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Ім'я</th>
+                <th>Email</th>
+                <th>Роль</th>
+                <th>Дії</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for user in users %}
+            <tr>
+                <td>{{ user.id }}</td>
+                <td>{{ user.username }}</td>
+                <td>{{ user.email }}</td>
+                <td><span class="role-badge">{{ user.role }}</span></td>
+                <td>
+                    <a href="{{ url_for('admin_users.edit_user', user_id=user.id) }}" class="btn btn-edit">Редагувати</a>
+                    
+                    <form action="{{ url_for('admin_users.delete_user', user_id=user.id) }}" method="POST" style="display:inline;">
+                        <button class="btn btn-delete" onclick="return confirm('Ви впевнені?')">Видалити</button>
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+</body>
+</html>

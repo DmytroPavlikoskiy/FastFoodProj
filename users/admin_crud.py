@@ -1,69 +1,51 @@
-from flask import Blueprint, jsonify, request
+from flask import Blueprint, render_template, redirect, url_for, request, flash, abort
 from models import db, User
-from flask import abort
-from flask_login import current_user
+from flask_login import current_user, login_required
+from db_config.decorators import admin_required
 
-admin_users_bp = Blueprint("admin", __name__)
+admin_users_bp = Blueprint("admin_users", __name__, template_folder="templates")
 
 def admin_required():
     if not current_user.is_authenticated or current_user.role != "admin":
         abort(403)
 
 
-@admin_users_bp.route("/users", methods=["GET"])
-def get_users():
-    admin_required()
-
+@admin_users_bp.route("/users")
+@login_required
+@admin_required
+def list_users():
     users = User.query.all()
-    return jsonify([
-        {
-            "id": u.id,
-            "username": u.username,
-            "email": u.email,
-            "role": u.role,
-            "phone": u.phone,
-            "address": u.address
-        } for u in users
-    ])
+    return render_template("admin_panel/users.html", users=users)
 
-@admin_users_bp.route("/users/<int:user_id>", methods=["GET"])
-def get_user(user_id):
-    admin_required()
 
+@admin_users_bp.route("/users/edit/<int:user_id>", methods=["GET", "POST"])
+@login_required
+@admin_required
+def edit_user(user_id):
     user = User.query.get_or_404(user_id)
-    return jsonify({
-        "id": user.id,
-        "username": user.username,
-        "email": user.email,
-        "role": user.role,
-        "phone": user.phone,
-        "address": user.address
-    })
+    
+    if request.method == "POST":
+        user.username = request.form.get("username")
+        user.email = request.form.get("email")
+        user.role = request.form.get("role")
+        db.session.commit()
+        flash("Дані користувача оновлено!", "success")
+        return redirect(url_for("admin_users.list_users"))
+        
+    return render_template("admin_panel/edit_user.html", user=user)
 
 
-@admin_users_bp.route("/users/<int:user_id>", methods=["PUT"])
-def update_user(user_id):
-    admin_required()
-
-    user = User.query.get_or_404(user_id)
-    data = request.json
-
-    user.username = data.get("username", user.username)
-    user.email = data.get("email", user.email)
-    user.phone = data.get("phone", user.phone)
-    user.address = data.get("address", user.address)
-    user.role = data.get("role", user.role)
-
-    db.session.commit()
-    return jsonify({"message": "Роль змінено"})
-
-
-@admin_users_bp.route("/users/<int:user_id>", methods=["DELETE"])
+@admin_users_bp.route("/users/delete/<int:user_id>", methods=["POST"])
+@login_required
+@admin_required
 def delete_user(user_id):
-    admin_required()
-
+    
+    if current_user.id == user_id:
+        flash("Ви не можете видалити власного користувача!", "danger")
+        return redirect(url_for("admin_users.list_users"))
+    
     user = User.query.get_or_404(user_id)
     db.session.delete(user)
     db.session.commit()
-
-    return jsonify({"message": "Користувача видалено"})
+    flash("Користувача видалено", "danger")
+    return redirect(url_for("admin_users.list_users"))
