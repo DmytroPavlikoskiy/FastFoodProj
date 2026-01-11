@@ -70,5 +70,9 @@
 </body>
 </html>
 
-
-<script src="../static/js/sign_up_sign_in.js"></script>
+<script>
+    // Передаємо готові посилання з Flask у JavaScript
+    const loginUrl = "{{ url_for('users.login') }}";
+    const registerUrl = "{{ url_for('users.register') }}";
+</script>
+<script src="{{ url_for('static', filename='js/sign_up_sign_in.js') }}"></script>

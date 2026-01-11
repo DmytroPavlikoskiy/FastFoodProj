@@ -1,0 +1,28 @@
+{% extends "base_admin.html" %}
+{% block content %}
+<div class="container mt-4">
+    <h2>Адмін-панель: Кошики користувачів</h2>
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>ID Кошика</th>
+                <th>Користувач</th>
+                <th>К-сть товарів</th>
+                <th>Дії</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for basket in baskets %}
+            <tr>
+                <td>{{ basket.id }}</td>
+                <td>{{ basket.user.username }} ({{ basket.user.email }})</td>
+                <td>{{ basket.items|length }}</td>
+                <td>
+                    <a href="{{ url_for('admin_basket.view_basket', basket_id=basket.id) }}" class="btn btn-info btn-sm">Переглянути</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

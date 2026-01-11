@@ -1,0 +1,84 @@
+/* Картка оплати */
+.payment-card {
+    background: var(--card-bg) !important;
+    border-radius: 32px !important;
+    border: 1px solid rgba(255, 255, 255, 0.05) !important;
+    position: relative;
+    overflow: hidden;
+}
+
+/* Іконка з пульсацією */
+.payment-icon-wrapper {
+    position: relative;
+    width: 80px;
+    height: 80px;
+    background: rgba(255, 138, 0, 0.1);
+    color: var(--accent-color);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2.5rem;
+    margin: 0 auto;
+}
+
+.pulse-ring {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    border: 2px solid var(--accent-color);
+    border-radius: 50%;
+    animation: pulse-ring 2s infinite;
+}
+
+@keyframes pulse-ring {
+    0% { transform: scale(0.8); opacity: 0.8; }
+    100% { transform: scale(1.5); opacity: 0; }
+}
+
+/* Блок з ціною */
+.price-box {
+    background: rgba(0, 0, 0, 0.2);
+    padding: 20px;
+    border-radius: 20px;
+    border: 1px solid rgba(255, 255, 255, 0.03);
+}
+
+.letter-spacing {
+    letter-spacing: 2px;
+}
+
+/* Тестова плашка */
+.demo-alert {
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    color: var(--text-muted);
+    padding: 12px;
+    border-radius: 12px;
+    font-size: 0.85rem;
+}
+
+/* Кнопки */
+.btn-outline-secondary {
+    color: var(--text-muted) !important;
+    transition: 0.3s;
+}
+
+.btn-outline-secondary:hover {
+    color: var(--text-main) !important;
+    background: rgba(255, 255, 255, 0.05) !important;
+}
+
+/* Фоновий декор */
+.payment-card::before {
+    content: "";
+    position: absolute;
+    top: -50px;
+    right: -50px;
+    width: 150px;
+    height: 150px;
+    background: var(--accent-color);
+    filter: blur(80px);
+    opacity: 0.1;
+    pointer-events: none;
+}

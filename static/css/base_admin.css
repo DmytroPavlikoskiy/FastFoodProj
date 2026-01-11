@@ -1,0 +1,56 @@
+/* Admin Specific Overrides */
+.admin-wrapper {
+    background-color: var(--bg-color);
+    min-height: calc(100vh - 70px);
+}
+
+/* Стилізація таблиць в адмінці */
+.table {
+    color: var(--text-main);
+    border-color: rgba(255, 255, 255, 0.05);
+    background: var(--card-bg);
+    border-radius: 16px;
+    overflow: hidden;
+    vertical-align: middle;
+}
+
+.table thead th {
+    background-color: rgba(0, 0, 0, 0.2);
+    color: var(--accent-color);
+    text-transform: uppercase;
+    font-size: 12px;
+    letter-spacing: 1px;
+    padding: 15px;
+    border-bottom: 2px solid rgba(255, 255, 255, 0.05);
+}
+
+.table tbody td {
+    padding: 15px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+/* Картки в адмінці */
+.admin-card {
+    background: var(--card-bg);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: 20px;
+    padding: 24px;
+    margin-bottom: 24px;
+}
+
+/* Кнопки в адмінці */
+.btn-admin-action {
+    border-radius: 10px;
+    padding: 6px 12px;
+    font-size: 14px;
+    font-weight: 600;
+    transition: 0.2s;
+}
+
+/* Статуси в таблицях */
+.badge-status {
+    padding: 6px 12px;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 11px;
+}

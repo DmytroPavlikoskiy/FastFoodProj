@@ -1,11 +1,11 @@
-from flask import Blueprint, request, jsonify, render_template, redirect
-from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
+import os
+from flask import Blueprint, request, jsonify, render_template, redirect, flash, url_for
+from flask_login import login_user, login_required, logout_user, current_user
+from werkzeug.security import generate_password_hash, check_password_hash
+
+# Імпортуємо об'єкти з вашого проекту
 from db_config.db_manager import login_manager, db
 from users.models import User
-from db_config.db_manager import get_db
-from werkzeug.security import generate_password_hash, check_password_hash
-from flask import url_for
-
 
 users_bp = Blueprint('users', __name__)
 
@@ -13,15 +13,26 @@ users_bp = Blueprint('users', __name__)
 def load_user(user_id):
     return User.query.get(int(user_id))
 
+# --- СТОРІНКИ (GET) ---
 
 @users_bp.route("/register", methods=["GET"])
 def register_page():
-    return render_template("sign_in_sign_up.html")
+    # Оскільки у вас одна сторінка для входу та реєстрації
+    return render_template("users/sign_in_sign_up.html")
 
+@users_bp.route("/login", methods=["GET"])
+def login_page():
+    return render_template("users/sign_in_sign_up.html")
+
+# --- ЛОГІКА (POST) ---
 
 @users_bp.route("/register", methods=["POST"])
 def register():
-    data = request.json
+    # Універсальне отримання даних (JSON або Form)
+    if request.is_json:
+        data = request.json
+    else:
+        data = request.form
 
     email = data.get("email")
     username = data.get("username")
@@ -30,18 +41,23 @@ def register():
     phone = data.get("phone")
     address = data.get("address")
 
-    user = User()
-
-    if user.get_user_by_email(email=email):
-        return jsonify({"error": "Email вже існує"}), 400
-
-    if user.get_user_by_username(username=username):
-        return jsonify({"error": "Username вже існує"}), 400
+    # Перевірки
+    user_helper = User()
     
-    if password and password_confirm and password != password_confirm:
-        return jsonify({"error": "Паролі не співпадають!"}), 400
+    if not email or not username or not password:
+        flash("Заповніть обов'язкові поля!", "danger")
+        return redirect(url_for('users.register_page'))
+
+    if user_helper.get_user_by_email(email=email):
+        flash("Користувач з таким Email вже існує", "danger")
+        return redirect(url_for('users.register_page'))
+
+    if password != password_confirm:
+        flash("Паролі не співпадають!", "danger")
+        return redirect(url_for('users.register_page'))
     
-    user, create = user.get_or_create(
+    # Створення користувача через ваш метод get_or_create
+    new_user, created = user_helper.get_or_create(
         User,
         email=email,
         username=username,
@@ -49,41 +65,57 @@ def register():
         phone=phone,
         address=address
     )
-    if create:
-        return jsonify({"message": "Реєстрація успішна"}), 201
+
+    if created:
+        login_user(new_user)
+        flash("Реєстрація успішна! Ласкаво просимо.", "success")
+        return redirect(url_for('menu.home_page'))
     else:
-        return jsonify({"message": "Упс, щось пішло не так !!!"}), 400
+        flash("Помилка при створенні акаунту.", "danger")
+        return redirect(url_for('users.register_page'))
 
-
-@users_bp.route("/login", methods=["GET"])
-def login_page():
-    return render_template("sign_in_sign_up.html")
 
 @users_bp.route("/login", methods=["POST"])
 def login():
-    # Якщо приходить JSON (через JS/Fetch)
-    if request.is_json:
-        data = request.json
-        identifier = data.get("email") or data.get("username")
-        password = data.get("password")
-    else:
-        # Якщо приходить звичайна HTML-форма
-        identifier = request.form.get("email")
-        password = request.form.get("password")
+    # Отримуємо дані (email може бути як email, так і username)
+    identifier = request.form.get("email")
+    password = request.form.get("password")
 
     if not identifier or not password:
-        return jsonify({"error": "Не вистачає даних для входу!"}), 400
+        flash("Введіть логін та пароль", "warning")
+        return redirect(url_for('users.login_page'))
 
     # Шукаємо користувача за email АБО username
     user = User.query.filter((User.email == identifier) | (User.username == identifier)).first()
 
+    # Перевірка хешу пароля
     if user and check_password_hash(user.password_hash, password):
-        login_user(user)
-        # Для API повертаємо JSON, для форми — redirect
-        if request.is_json:
-            return jsonify({"message": "Успішно"}), 200
-        return redirect(url_for('menu.index')) # Змініть на ваш реальний endpoint
+        login_user(user, remember=request.form.get("remember"))
+        flash(f"Раді бачити, {user.username}!", "success")
+        
+        # Перенаправлення на головну сторінку меню
+        return redirect(url_for('menu.home_page'))
     
-    return jsonify({"error": "Невірний логін або пароль"}), 401
+    # Якщо дані невірні
+    flash("Невірний email/username або пароль", "danger")
+    return redirect(url_for('users.login_page'))
+
+@users_bp.route("/logout")
+@login_required
+def logout():
+    logout_user()
+    flash("Ви вийшли з системи", "info")
+    return redirect(url_for('users.login_page'))
 
 
+@users_bp.route("/profile")
+@login_required
+def profile():
+    # Перевіряємо, чи є у користувача профіль (якщо немає - створюємо порожній)
+    if not current_user.profile:
+        from users.models import Profile
+        new_profile = Profile(user_id=current_user.id)
+        db.session.add(new_profile)
+        db.session.commit()
+    
+    return render_template("users/profile.html", user=current_user)

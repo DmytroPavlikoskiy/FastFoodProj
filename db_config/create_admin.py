@@ -1,3 +1,4 @@
+#db_config/create_admin.py
 from main import app
 from users.models import db, User
 from werkzeug.security import generate_password_hash

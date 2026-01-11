@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/process.css') }}">
+
+{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6 col-lg-5">
+            <div class="card payment-card border-0 shadow-lg">
+                <div class="card-body p-5 text-center">
+                    <div class="payment-icon-wrapper mb-4">
+                        <div class="pulse-ring"></div>
+                        <i class="bi bi-shield-lock-fill"></i>
+                    </div>
+                    
+                    <h2 class="fw-bold mb-2 text-white">Оплата</h2>
+                    <p class="text-muted mb-4">Замовлення #{{ order.id }}</p>
+
+                    <div class="price-box mb-4">
+                        <span class="d-block text-muted small text-uppercase letter-spacing">Сума до сплати</span>
+                        <span class="display-5 fw-bold text-warning">{{ order.total_amount }} грн</span>
+                    </div>
+                    
+                    <div class="demo-alert mb-4">
+                        <i class="bi bi-info-circle me-2"></i>
+                        Це тестова сторінка. Натисніть кнопку нижче для симуляції оплати.
+                    </div>
+
+                    <form action="{{ url_for('payment.process_payment', order_id=order.id) }}" method="POST">
+                        <button type="submit" class="btn btn-primary btn-lg w-100 fw-bold rounded-pill py-3 mb-3">
+                            <i class="bi bi-credit-card me-2"></i> Оплатити карткою
+                        </button>
+                    </form>
+                    
+                    <a href="{{ url_for('payment.success_page', order_id=order.id) }}" class="btn btn-outline-secondary w-100 rounded-pill py-3 border-0 shadow-none">
+                        Оплатити готівкою кур'єру
+                    </a>
+                </div>
+            </div>
+            
+            <div class="text-center mt-4">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/5e/Visa_Inc._logo.svg/2560px-Visa_Inc._logo.svg.png" height="20" class="me-3 opacity-50" alt="Visa">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/2a/Mastercard-logo.svg/1280px-Mastercard-logo.svg.png" height="20" class="opacity-50" alt="Mastercard">
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

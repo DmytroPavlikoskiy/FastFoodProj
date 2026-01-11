@@ -1,0 +1,98 @@
+{% extends "base.html" %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/basket.css') }}">
+
+{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="row g-4">
+        <div class="col-lg-8">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2 class="fw-bold mb-0">Кошик <span class="text-muted fs-5">({{ basket.items|length }} позиції)</span></h2>
+                {% if basket.items %}
+                    <a href="{{ url_for('basket.basket_clear') }}" class="btn btn-sm btn-outline-danger rounded-pill">
+                        <i class="bi bi-trash me-1"></i> Очистити
+                    </a>
+                {% endif %}
+            </div>
+
+            {% if basket.items %}
+                <div class="basket-items">
+                    {% for item in basket.items %}
+                    <div class="basket-card mb-3">
+                        <div class="row align-items-center g-3">
+                            <div class="col-3 col-md-2">
+                                <img src="{{ url_for('static', filename=item.dish.image_url) }}" class="img-fluid rounded-3 item-img" alt="{{ item.dish.name }}">
+                            </div>
+                            <div class="col-6 col-md-6">
+                                <h5 class="mb-1 fw-bold">{{ item.dish.name }}</h5>
+                                <p class="text-muted small mb-0">{{ item.dish.price }} грн / шт.</p>
+                            </div>
+                            <div class="col-3 col-md-4 text-end">
+                                <div class="d-flex align-items-center justify-content-end gap-3">
+                                    <div class="quantity-control">
+                                        <a href="{{ url_for('basket.basket_minus_product', item_id=item.id) }}" class="q-btn">-</a>
+                                        <span class="q-val">{{ item.quantity }}</span>
+                                        <a href="{{ url_for('basket.basket_add_product', dish_id=item.dish_id) }}" class="q-btn">+</a>
+                                    </div>
+                                    <div class="price-total d-none d-md-block ms-3">
+                                        <span class="fw-bold">{{ item.dish.price * item.quantity }} грн</span>
+                                    </div>
+                                    <a href="{{ url_for('basket.basket_remove_product', item_id=item.id) }}" class="text-muted ms-2 hover-danger">
+                                        <i class="bi bi-x-lg"></i>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div class="text-center py-5 empty-state">
+                    <i class="bi bi-basket text-muted" style="font-size: 4rem;"></i>
+                    <h3 class="mt-3">Ваш кошик порожній</h3>
+                    <p class="text-muted">Час додати щось смачненьке!</p>
+                    <a href="{{ url_for('menu.home_page') }}" class="btn btn-warning rounded-pill px-5 fw-bold mt-2">До меню</a>
+                </div>
+            {% endif %}
+        </div>
+
+        <div class="col-lg-4">
+            <div class="card summary-card border-0 shadow-sm sticky-top" style="top: 100px;">
+                <div class="card-body p-4">
+                    <h4 class="fw-bold mb-4">Разом</h4>
+                    <div class="d-flex justify-content-between mb-2">
+                        <span class="text-muted">Сума замовлення</span>
+                        <span class="fw-bold">{{ total_price }} грн</span>
+                    </div>
+                    <div class="d-flex justify-content-between mb-4">
+                        <span class="text-muted">Доставка</span>
+                        <span class="text-success fw-bold">Безкоштовно</span>
+                    </div>
+                    <hr class="opacity-10">
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <span class="fs-5 fw-bold">До сплати</span>
+                        <span class="fs-4 fw-bold text-warning">{{ total_price }} грн</span>
+                    </div>
+                    
+                    {% if current_user.is_authenticated %}
+                        <a href="{{ url_for('orders.checkout') }}" class="btn btn-warning w-100 btn-lg rounded-pill fw-bold {% if not basket.items %}disabled{% endif %}">
+                            Оформити замовлення
+                        </a>
+                    {% else %}
+                        <a href="{{ url_for('users.login_page') }}" class="btn btn-warning w-100 btn-lg rounded-pill fw-bold">
+                            Увійдіть для замовлення
+                        </a>
+                    {% endif %}
+                    
+                    <div class="mt-3 text-center">
+                        <small class="text-muted"><i class="bi bi-shield-check me-1"></i> Безпечна оплата</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

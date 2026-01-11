@@ -1,63 +1,38 @@
-from flask import Blueprint, redirect, url_for, request, abort
-from models import db, Payment, Comments
+from flask import Blueprint, render_template, redirect, url_for, abort
+from flask_login import login_required, current_user
+from db_config.db_manager import db
+from payment.models import Payment
+from orders.models import Order
 import uuid
 
+payment_bp = Blueprint('payment', __name__, template_folder="templates")
 
-payment_bp = Blueprint('payment', __name__)
-
-@payment_bp.route('/example_url')
-def example():
-    pass
-
-
+@payment_bp.route('/process/<int:order_id>')
+@login_required
 def process_payment(order_id):
-    transaction_id = str(uuid.uuid4())
-
-    payment = Payment(
-        order_id=order_id,
-        status = "success",
-        transaction_id=transaction_id
-    )
-
-
-    db.session.add(payment)
-    db.session.commit()
-
-    return redirect(url_for('success_page'))
-
-
-@payment_bp.route('/comment/<int:product_id>/<int:user_id>', methods=['POST'])
-def add_comment(product_id, user_id):
-    payment = Payment.query.filter_by(status="success").first()
-    if not payment:
-        abort(403, description="Коментар можна залишити тільки після покупки!")
-
-
-    text = request.form.get("text")
-    rating = request.form.get("rating")
-
-
-
-    if not text or not rating:
-        abort(400, description="Заповніть всі поля коментаря!")
-
-    try:
-        rating = int(rating)
-        if rating < 1 or rating > 5:
-            abort(400, description="Рейтинг має бути від 1 до 5")
-
-    except ValueError:
-         abort(400, description="Рейтинг має бути числом")
-
-    comment = Comments(
-        user_id=user_id,
-        product_id=product_id,
-        text=text,
-        rating=rating
-    )
-
-    db.session.add(comment)
-    db.session.commit()
+    order = Order.query.get_or_404(order_id)
     
-    return "Коментар додано успішно"
+    if order.user_id != current_user.id:
+        abort(403)
 
+    # Перевіряємо, чи вже існує платіж для цього замовлення
+    payment = Payment.query.filter_by(order_id=order.id).first()
+    
+    if not payment:
+        # Якщо платежу немає — створюємо "заглушку"
+        payment = Payment(
+            order_id=order.id,
+            status="pending", 
+            transaction_id=f"CASH-{uuid.uuid4().hex[:8].upper()}" # Додано літеру 'a'
+        )
+        db.session.add(payment)
+        db.session.commit()
+    
+    # Якщо платіж вже був успішний, просто йдемо далі
+    return redirect(url_for('payment.success_page', order_id=order.id))
+
+@payment_bp.route('/success/<int:order_id>')
+@login_required
+def success_page(order_id):
+    order = Order.query.get_or_404(order_id)
+    return render_template('payment/success_thanks_for_bye.html', order=order)

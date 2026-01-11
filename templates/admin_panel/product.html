@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <title>Admin Panel</title>
+    <style>
+        body { font-family: Arial; padding: 20px; }
+        table { width: 100%; border-collapse: collapse; }
+        th, td { border: 1px solid #ddd; padding: 8px; }
+    </style>
+</head>
+<body>
+
+<h2>🍽 Адмін-панель меню</h2>
+
+<form method="get">
+    <input type="text" name="search" placeholder="Пошук страви" value="{{ search or '' }}">
+
+    <select name="category">
+        <option value="">Всі категорії</option>
+        {% for cat in categories %}
+            <option value="{{ cat.id }}">
+                {% if selected_category == cat.id %}
+                    selected_category
+                {% endif %}>
+                {{ cat.name }}
+            </option>
+        {% endfor %}
+    </select>
+
+    <button type="submit">Фільтрувати</button>
+</form>
+
+<br>
+
+<table>
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Назва</th>
+            <th>Категорія</th>
+            <th>Ціна</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for dish in dishes %}
+        <tr>
+            <td>{{ dish.id }}</td>
+            <td>{{ dish.name }}</td>
+            <td>{{ dish.category.name }}</td>
+            <td>{{ dish.price }} ₴</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+</body>
+</html>

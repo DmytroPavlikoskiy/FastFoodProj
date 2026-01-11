@@ -10,7 +10,13 @@ load_dotenv()
 
 app = Flask(__name__)
 
+def get_app():
+    return app
+
 # 2. Конфігурація додатка
+app.config['UPLOAD_FOLDER'] = os.path.join(app.root_path, 'static', 'images', 'dishes')
+os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
+
 app.config['SECRET_KEY'] = os.getenv('SECRET_KEY', 'dev-key-12345')
 app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024
 app.config['UPLOAD_FOLDER'] = 'static/images'
@@ -25,17 +31,34 @@ init_db(app)
 
 # 5. Реєстрація Blueprints
 # Робимо імпорт тут, щоб уникнути circular imports
-try:
-    from users.views import users_bp
-    app.register_blueprint(users_bp, url_prefix='/users')
-    from users.admin_crud import admin_users_bp
-    app.register_blueprint(admin_users_bp, url_prefix='/admin')
+# try:
+from users.views import users_bp
+app.register_blueprint(users_bp, url_prefix='/users')
+from basket.views import basket_bp
+app.register_blueprint(basket_bp, url_prefix='/basket')
+from menu.views import menu_bp
+app.register_blueprint(menu_bp, url_prefix='/menu')
+from orders.views import orders_bp
+app.register_blueprint(orders_bp, url_prefix='/orders')
+from payment.views import payment_bp
+app.register_blueprint(payment_bp, url_prefix='/payment')
+
+from users.admin_crud import admin_users_bp
+app.register_blueprint(admin_users_bp, url_prefix='/admin')
+from basket.admin_crud import admin_basket_bp
+app.register_blueprint(admin_basket_bp, url_prefix='/admin')
+from menu.admin_crud import admin_menu_bp
+app.register_blueprint(admin_menu_bp, url_prefix='/admin')
+from orders.admin_crud import admin_orders_bp
+app.register_blueprint(admin_orders_bp, url_prefix='/admin')
+from payment.admin_crud import admin_payments_bp
+app.register_blueprint(admin_payments_bp, url_prefix='/admin')
     
 
     
-    print("✅ Усі модулі (Blueprints) успішно зареєстровані!")
-except Exception as e:
-    print(f"❌ Помилка при реєстрації Blueprints: {e}")
+#     print("✅ Усі модулі (Blueprints) успішно зареєстровані!")
+# except Exception as e:
+#     print(f"❌ Помилка при реєстрації Blueprints: {e}")
 
 
 @app.route('/')
@@ -55,29 +78,3 @@ if __name__ == "__main__":
     
     app.run(debug=True, port=5000)
 
-
-# --- РЕЄСТРАЦІЯ BLUEPRINTS (Як це має бути) ---
-# Діти створюють їх у своїх папках, а ви тут імпортуєте
-# try:
-#     from users.admin_crud import admin_users_bp
-#     app.register_blueprint(admin_users_bp, url_prefix='/admin/users')
-
-#     from users.views import users_bp
-#     app.register_blueprint(users_bp, url_prefix='/users')
-    
-#     from menu.views import menu_bp
-#     app.register_blueprint(menu_bp, url_prefix='/menu')
-    
-#     from basket.views import basket_bp
-#     app.register_blueprint(basket_bp, url_prefix='/basket')
-    
-#     from orders.views import orders_bp
-#     app.register_blueprint(orders_bp, url_prefix='/orders')
-    
-#     from payment.views import payment_bp
-#     app.register_blueprint(payment_bp, url_prefix='/payment')
-    
-#     print("✅ Усі модулі (Blueprints) успішно зареєстровані!")
-
-# except ImportError as e:
-#     print(f"⚠️ Помилка імпорту модулів: {e}")

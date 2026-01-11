@@ -1,0 +1,36 @@
+<div class="list-group list-group-flush">
+    {% for order in orders %}
+    <div class="list-group-item">
+        <div class="d-flex justify-content-between align-items-center mb-2">
+            <h6 class="mb-0 fw-bold order-id-text text-white">Замовлення #{{ order.id }}</h6>
+            <span class="badge {% if order.status == 'pending' %}bg-warning text-dark{% elif order.status == 'delivered' %}bg-success{% else %}bg-info{% endif %}">
+                {{ order.status }}
+            </span>
+        </div>
+        
+        <div class="d-flex justify-content-between align-items-end">
+            <div class="small text-muted">
+                <p class="mb-1"><i class="bi bi-calendar3 me-2"></i>{{ order.created_at.strftime('%d.%m.%Y %H:%M') }}</p>
+                <p class="mb-0"><i class="bi bi-geo-alt me-2"></i>{{ order.delivery_address[:30] }}...</p>
+            </div>
+            <div class="text-accent-price fw-bold">
+                {{ order.total_amount }} грн
+            </div>
+        </div>
+
+        <hr class="my-3 opacity-10">
+        
+        <ul class="order-items-list">
+            {% for item in order.items %}
+            <li>{{ item.quantity }}x {{ item.dish.name }}</li>
+            {% endfor %}
+        </ul>
+    </div>
+    {% else %}
+    <div class="text-center py-5">
+        <i class="bi bi-emoji-frown text-muted fs-1"></i>
+        <p class="text-muted mt-3">Ви ще нічого не замовляли 🍕</p>
+        <a href="/" class="btn btn-outline-warning btn-sm rounded-pill mt-2">Замовити зараз</a>
+    </div>
+    {% endfor %}
+</div>

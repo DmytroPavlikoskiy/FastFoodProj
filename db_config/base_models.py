@@ -1,3 +1,4 @@
+#db_config/base_models.py
 from db_config.db_manager import get_db
 
 db = get_db()

@@ -1,29 +1,24 @@
-from db_config.db_manager import db
+from db_config.db_manager import db, get_db
 from sqlalchemy import Column, ForeignKey, Integer
 from sqlalchemy.orm import relationship
 from users.models import User
-from menu.models import Products
+from menu.models import Dish
 
 
-
-class BasketItem(db.Model):
-    tablename = "basket_items"
-
-    id = Column(Integer, primary_key=True)
-    product_id = ForeignKey(Integer, nullable=False)
-    quantity = Column(Integer, nullable=False, default=1)
-
-     
-    product_relalationship = relationship("Products", backref="basket_item")
-    def repr(self):
-        return (
-            f"<BasketItem user_id={self.user_id} "
-            f"product_id={self.product_id} "
-            f"quantity={self.quantity}>"
-        )
 
 class Basket(db.Model):
-    tablename = "baskets"
-    user = ForeignKey(User, nullable=False)
-    product = ForeignKey(BasketItem, nullable=False)
-    user_relationship = relationship("User", baskref="baskets")
+    __tablename__ = "baskets"
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=False)
+    
+    user = db.relationship("User", back_populates="basket")
+    items = db.relationship("BasketItem", backref="basket", cascade="all, delete-orphan")
+
+class BasketItem(db.Model):
+    __tablename__ = "basket_items"
+    id = db.Column(db.Integer, primary_key=True)
+    basket_id = db.Column(db.Integer, db.ForeignKey("baskets.id"), nullable=False)
+    dish_id = db.Column(db.Integer, db.ForeignKey("dishes.id"), nullable=False)
+    quantity = db.Column(db.Integer, default=1)
+
+    dish = db.relationship("Dish")

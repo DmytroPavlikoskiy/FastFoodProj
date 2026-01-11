@@ -1,0 +1,99 @@
+{% extends "base.html" %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/checkout.css') }}">
+
+{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row g-4">
+        <div class="col-lg-7">
+            <div class="card checkout-card border-0 shadow-lg">
+                <div class="card-header border-0 bg-transparent py-4 px-4">
+                    <h3 class="mb-0 fw-bold d-flex align-items-center">
+                        <i class="bi bi-geo-alt me-3 text-warning"></i>Оформлення
+                    </h3>
+                </div>
+                <div class="card-body p-4">
+                    <form action="{{ url_for('orders.checkout') }}" method="POST">
+                        <div class="input-custom-group mb-4">
+                            <label class="form-label">Ваше ім'я</label>
+                            <input type="text" class="form-control shadow-none" value="{{ current_user.username }}" readonly>
+                        </div>
+
+                        <div class="input-custom-group mb-4">
+                            <label class="form-label">Контактний телефон</label>
+                            <input type="tel" name="phone" class="form-control shadow-none" 
+                                   placeholder="+380..." value="{{ current_user.phone or '' }}" required>
+                            <div class="form-text">Зателефонуємо для підтвердження</div>
+                        </div>
+
+                        <div class="input-custom-group mb-4">
+                            <label class="form-label">Адреса доставки</label>
+                            <textarea name="address" class="form-control shadow-none" rows="3" 
+                                      placeholder="Вулиця, будинок, квартира..." required>{{ current_user.address or '' }}</textarea>
+                        </div>
+
+                        <div class="input-custom-group mb-4">
+                            <label class="form-label">Коментар</label>
+                            <textarea name="comment" class="form-control shadow-none" rows="2" placeholder="Наприклад: код домофону 123"></textarea>
+                        </div>
+
+                        <div class="d-grid mt-5">
+                            <button type="submit" class="btn btn-warning btn-lg fw-bold rounded-pill py-3">
+                                Підтвердити замовлення
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-5">
+            <div class="card summary-card border-0 shadow-lg">
+                <div class="card-header border-0 bg-transparent py-4 px-4">
+                    <h5 class="mb-0 fw-bold text-uppercase letter-spacing">Ваше замовлення</h5>
+                </div>
+                <div class="card-body px-4">
+                    <div class="order-items-scroll mb-4">
+                        {% for item in basket.items %}
+                        <div class="d-flex justify-content-between align-items-center mb-3 order-item-row">
+                            <div class="d-flex align-items-center">
+                                <div class="item-badge me-3">{{ item.quantity }}x</div>
+                                <div>
+                                    <h6 class="mb-0 fw-bold">{{ item.dish.name }}</h6>
+                                    <small class="text-muted">{{ item.dish.price }} грн/шт</small>
+                                </div>
+                            </div>
+                            <span class="fw-bold">{{ item.dish.price * item.quantity }} грн</span>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    
+                    <div class="billing-details bg-dark-subtle p-3 rounded-4">
+                        <div class="d-flex justify-content-between mb-2">
+                            <span class="text-muted">Сума товарів</span>
+                            <span class="fw-bold">{{ total }} грн</span>
+                        </div>
+                        <div class="d-flex justify-content-between mb-2">
+                            <span class="text-muted">Доставка</span>
+                            <span class="text-success fw-bold">Безкоштовно</span>
+                        </div>
+                        <hr class="opacity-10 my-3">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <span class="fs-5 fw-bold text-white">Всього:</span>
+                            <span class="fs-3 fw-bold text-warning">{{ total }} грн</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-footer bg-transparent border-0 text-center pb-4 pt-0">
+                    <a href="{{ url_for('basket.basket_detail') }}" class="text-decoration-none text-muted small hover-accent">
+                        <i class="bi bi-arrow-left me-1"></i> Редагувати кошик
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

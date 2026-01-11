@@ -1,0 +1,81 @@
+/* Картки */
+.checkout-card, .summary-card {
+    background: var(--card-bg) !important;
+    border-radius: 28px !important;
+    border: 1px solid rgba(255, 255, 255, 0.05) !important;
+    color: var(--text-main);
+}
+
+.checkout-card {
+    padding: 10px;
+}
+
+/* Поля вводу */
+.input-custom-group label {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    margin-bottom: 8px;
+    display: block;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.input-custom-group input, 
+.input-custom-group textarea {
+    background: var(--input-bg) !important;
+    border: 1px solid rgba(255, 255, 255, 0.05) !important;
+    border-radius: 16px !important;
+    color: white !important;
+    padding: 14px 20px;
+}
+
+.input-custom-group input:focus, 
+.input-custom-group textarea:focus {
+    border-color: var(--accent-color) !important;
+    box-shadow: 0 0 0 4px rgba(255, 138, 0, 0.1) !important;
+}
+
+.form-text {
+    color: #5c6370;
+    font-size: 0.75rem;
+    margin-top: 6px;
+}
+
+/* Список замовлення */
+.order-item-row {
+    padding-bottom: 15px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+}
+
+.item-badge {
+    background: var(--input-bg);
+    color: var(--accent-color);
+    width: 35px;
+    height: 35px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 10px;
+    font-weight: 800;
+    font-size: 0.8rem;
+}
+
+.billing-details {
+    background: rgba(0, 0, 0, 0.2);
+}
+
+/* Ефекти */
+.hover-accent:hover {
+    color: var(--accent-color) !important;
+}
+
+.letter-spacing {
+    letter-spacing: 1px;
+}
+
+/* Скролбар для списку товарів (якщо їх багато) */
+.order-items-scroll {
+    max-height: 300px;
+    overflow-y: auto;
+    padding-right: 10px;
+}

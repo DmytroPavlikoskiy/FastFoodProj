@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/success_thanks_for_bye.css') }}">
+
+{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8 text-center">
+            <div class="card success-card border-0 shadow-lg p-4 p-md-5">
+                <div class="card-body">
+                    <div class="success-icon-container mb-4">
+                        <div class="success-bg-glow"></div>
+                        <i class="bi bi-check2-circle"></i>
+                    </div>
+                    
+                    <h1 class="fw-bold mb-3 text-white">Дякуємо за замовлення!</h1>
+                    <p class="lead text-muted mb-5">
+                        Ваше замовлення <span class="order-number">#{{ order.id }}</span> вже готується.
+                    </p>
+
+                    <div class="details-box text-start mb-5">
+                        <h5 class="fw-bold mb-4 text-white">
+                            <i class="bi bi-info-circle me-2 text-warning"></i>Інформація
+                        </h5>
+                        <div class="d-flex flex-column gap-3">
+                            <div class="d-flex justify-content-between border-bottom border-secondary pb-2">
+                                <span class="text-muted">Адреса доставки:</span>
+                                <span class="text-white fw-medium">{{ order.delivery_address }}</span>
+                            </div>
+                            <div class="d-flex justify-content-between border-bottom border-secondary pb-2">
+                                <span class="text-muted">Сума до сплати:</span>
+                                <span class="text-warning fw-bold">{{ order.total_amount }} грн</span>
+                            </div>
+                            <div class="d-flex justify-content-between">
+                                <span class="text-muted">Статус:</span>
+                                <span class="badge bg-success-soft">Прийнято</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <p class="text-muted mb-5">
+                        Менеджер зв'яжеться з вами протягом <span class="text-white fw-bold">5-10 хвилин</span> для підтвердження.
+                    </p>
+
+                    <div class="d-flex flex-column flex-sm-row gap-3 justify-content-center">
+                        <a href="{{ url_for('menu.home_page') }}" class="btn btn-warning btn-lg px-5 fw-bold rounded-pill shadow-orange">
+                            На головну
+                        </a>
+                        <button class="btn btn-outline-light btn-lg px-5 rounded-pill" data-bs-toggle="modal" data-bs-target="#ordersModal">
+                            Мої замовлення
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="mt-5 contact-footer">
+                <p class="text-muted">Маєте запитання? Напишіть нам у Telegram або зателефонуйте</p>
+                <div class="d-flex justify-content-center gap-4 fs-5 text-white">
+                    <span><i class="bi bi-telephone text-warning me-2"></i> 0-800-FAST-FOOD</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

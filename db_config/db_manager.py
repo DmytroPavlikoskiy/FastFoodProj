@@ -1,3 +1,4 @@
+#db_config/db_manager.py
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.orm import DeclarativeBase
 from flask_login import LoginManager
@@ -34,12 +35,28 @@ def init_db(app):
     # 3. Створюємо таблиці в контексті додатка
     with app.app_context():
         try:
-            # Імпортуємо моделі тут, щоб SQLAlchemy знала про них
+            # 1. Імпортуємо ВСІ моделі з проекту
             from users.models import User, Profile 
+            from menu.models import Category, Dish, Comments
+            from basket.models import Basket, BasketItem
+            from payment.models import Payment
+            from orders.models import Order, OrderItem
+            # Додай інші, якщо вони є (наприклад, Comments)
+
+            # 2. Тепер створюємо таблиці
             db.create_all()
             print(f"✅ База даних '{name}' та таблиці успішно перевірені!")
         except Exception as e:
             print(f"❌ Помилка ініціалізації БД: {e}")
+    # with app.app_context():
+    #     try:
+    #         # Імпортуємо моделі тут, щоб SQLAlchemy знала про них
+    #         from users.models import User, Profile 
+    #         db.create_all()
+    #         print(f"✅ База даних '{name}' та таблиці успішно перевірені!")
+    #     except Exception as e:
+    #         print(f"❌ Помилка ініціалізації БД: {e}")
+
 
 def get_db():
     return db

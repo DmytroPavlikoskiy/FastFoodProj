@@ -1,0 +1,79 @@
+{% extends "base_admin.html" %}
+{% block content %}
+<div class="row">
+    <div class="col-md-4">
+        <div class="card shadow-sm mb-4">
+            <div class="card-header bg-dark text-white">Додати страву</div>
+            <div class="card-body">
+                <form action="{{ url_for('admin_menu.add_dish') }}" method="POST" enctype="multipart/form-data">
+                    <div class="mb-3">
+                        <label>Назва</label>
+                        <input type="text" name="name" class="form-control" required>
+                    </div>
+                    <div class="mb-3">
+                        <label>Ціна (грн)</label>
+                        <input type="number" step="0.01" name="price" class="form-control" required>
+                    </div>
+                    <div class="mb-3">
+                        <label>Категорія</label>
+                        <select name="category_id" class="form-select">
+                            {% for cat in categories %}
+                            <option value="{{ cat.id }}">{{ cat.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label>Зображення</label>
+                        <input type="file" name="image" class="form-control" accept="image/*">
+                    </div>
+                    <button class="btn btn-warning w-100">Зберегти страву</button>
+                </form>
+            </div>
+        </div>
+
+        <div class="card shadow-sm">
+            <div class="card-header bg-secondary text-white">Нова категорія</div>
+            <div class="card-body">
+                <form action="{{ url_for('admin_menu.add_category') }}" method="POST">
+                    <input type="text" name="name" class="form-control mb-2" placeholder="Назва (напр. Бургери)">
+                    <button class="btn btn-outline-dark btn-sm w-100">Додати</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-8">
+        <h3>Управління меню</h3>
+        <table class="table table-hover">
+            <thead class="table-light">
+                <tr>
+                    <th>Фото</th>
+                    <th>Назва</th>
+                    <th>Ціна</th>
+                    <th>Категорія</th>
+                    <th>Дії</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for dish in dishes %}
+                <tr>
+                    <td>
+                        {% if dish.image_url %}
+                        <img src="{{ url_for('static', filename=dish.image_url) }}" width="50" class="rounded">
+                        {% endif %}
+                    </td>
+                    <td>{{ dish.name }}</td>
+                    <td>{{ dish.price }} грн</td>
+                    <td>{{ dish.category.name if dish.category else '-' }}</td>
+                    <td>
+                        <form action="{{ url_for('admin_menu.delete_dish', dish_id=dish.id) }}" method="POST">
+                            <button class="btn btn-sm btn-outline-danger">Видалити</button>
+                        </form>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

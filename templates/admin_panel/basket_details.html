@@ -1,0 +1,31 @@
+{% extends "base_admin.html" %}
+{% block content %}
+<div class="container mt-4">
+    <h3>Деталі кошика #{{ basket.id }} (Користувач: {{ basket.user.username }})</h3>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Страва</th>
+                <th>Кількість</th>
+                <th>Ціна за од.</th>
+                <th>Дії</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in basket.items %}
+            <tr>
+                <td>{{ item.dish.name }}</td>
+                <td>{{ item.quantity }}</td>
+                <td>{{ item.dish.price }} грн</td>
+                <td>
+                    <form action="{{ url_for('admin_basket.delete_basket_item', item_id=item.id) }}" method="POST">
+                        <button class="btn btn-danger btn-sm">Видалити</button>
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <a href="{{ url_for('admin_basket.list_baskets') }}" class="btn btn-secondary">Назад до списку</a>
+</div>
+{% endblock %}

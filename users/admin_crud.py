@@ -1,13 +1,9 @@
 from flask import Blueprint, render_template, redirect, url_for, request, flash, abort
-from models import db, User
+from users.models import db, User
 from flask_login import current_user, login_required
 from db_config.decorators import admin_required
 
 admin_users_bp = Blueprint("admin_users", __name__, template_folder="templates")
-
-def admin_required():
-    if not current_user.is_authenticated or current_user.role != "admin":
-        abort(403)
 
 
 @admin_users_bp.route("/users")
